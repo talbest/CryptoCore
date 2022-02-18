@@ -1,3 +1,11 @@
+function getCardContainer() {
+    // div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="cardContainer">
+    const cardcontainer = document.createElement("div")
+    cardcontainer.className = "row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"
+    cardcontainer.id = "cardContainer"
+    return cardcontainer
+}
+
 function getCardUi(Coin) {
     const { id, coinCode, coinName } = Coin
 

@@ -2,7 +2,7 @@
 const DOM = {
     searchBar: null,
     contantContainer: null,
-    cardContainer: null,
+    CardContainer: null,
     modalContainer: null,
     modalCloseBtn: null,
     modalSaveBtn: null,
@@ -10,7 +10,9 @@ const DOM = {
 
 const APIS = {
     list: "https://api.coingecko.com/api/v3/coins",
-    moreInfo: "https://api.coingecko.com/api/v3/coins"
+    moreInfo: "https://api.coingecko.com/api/v3/coins",
+    live: "https://min-api.cryptocompare.com/data/pricemulti?fsyms=",
+    liveSeccend:"usdc&tsyms=USD"
 }
 
 const STATE = {
@@ -18,16 +20,25 @@ const STATE = {
     selectedHolder: null
 }
 
+const Pages = {
+    cardPage: true,
+    about: false,
+    liveReports: false,
+}
+
 function init() {
     DOM.searchBar = $("#searchBar");
     DOM.searchBar.on("keyup", searchlogic)
     DOM.contantContainer = $("#contantContainer")
-    DOM.cardContainer = $("#cardContainer")
     DOM.modalContainer = $("#modalBody")
     DOM.modalCloseBtn = $("#modalClose")
     DOM.modalSaveBtn = $("#modalSave")
-    DOM.cardContainer[0].append(getLoader())
     STATE.selectedHolder = new Selected()
+    DOM.CardContainer = getCardContainer()
+    DOM.CardContainer.append(getLoader())
+    DOM.contantContainer[0].append(DOM.CardContainer)
+
+
     GetCoins()
     handleBtns()
 
@@ -46,30 +57,44 @@ async function GetCoins() {
             return coin
         })
         STATE.coinsInState = coinsArray
-        draw(STATE.coinsInState)
+        drawCoins(STATE.coinsInState)
     } catch (e) {
         console.log(e)
     }
 
 }
 
-function draw(coinAraay) {
-    const cardContainer = DOM.cardContainer[0]
-    const cardData = coinAraay
-    clearDOMContent()
+async function drawCoinsPage() {
+    clearDOMContainer()
+    DOM.CardContainer = getCardContainer()
+    DOM.CardContainer.append(getLoader())
+    DOM.contantContainer[0].append(DOM.CardContainer)
+    await GetCoins()
+
+    drawCoins(STATE.coinsInState)
+
+}
+
+function drawCoins(coinAray) {
+    const contantContainer = DOM.CardContainer
+    const cardData = coinAray
+    clearDOMCardContent()
     const cardUiArray = cardData.map(current => {
         return getCardUi(current)
     })
-    cardContainer.append(...cardUiArray)
+    contantContainer.append(...cardUiArray)
 
 }
 
 function searchlogic() {
-    const searchvalue = DOM.searchBar.val()
-    const searchResult = STATE.coinsInState.filter((current => {
-        return current.coinName.toUpperCase().includes(searchvalue.toUpperCase())
-    }))
-    draw(searchResult)
+    if (Pages.cardPage) {
+        const searchvalue = DOM.searchBar.val()
+        const searchResult = STATE.coinsInState.filter((current => {
+            return current.coinName.toUpperCase().includes(searchvalue.toUpperCase())
+        }))
+        drawCoins(searchResult)
+    }
+
 
 }
 
@@ -83,8 +108,12 @@ function getLoader() {
     return divLoader
 }
 
-function clearDOMContent() {
-    DOM.cardContainer[0].innerHTML = ""
+function clearDOMCardContent() {
+    DOM.CardContainer.innerHTML = ""
+}
+
+function clearDOMContainer() {
+    DOM.contantContainer[0].innerHTML = ""
 }
 
 async function getMoreInfo(coinCode) {
@@ -110,4 +139,12 @@ async function getMoreInfo(coinCode) {
 function handleBtns() {
     DOM.modalCloseBtn.on("click", closeBtn)
     DOM.modalSaveBtn.on("click", saveBtn)
+}
+
+
+function changePageObj(pageName) {
+    Pages.cardPage = false
+    Pages.about = false
+    Pages.liveReports = false
+    Pages[`${pageName}`] = true
 }
