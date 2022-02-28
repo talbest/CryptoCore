@@ -50,7 +50,6 @@ async function GetCoins() {
     try {
         const result = await fetch(`${APIS.list}`)
         const jsonResult = await result.json();
-        console.log(jsonResult)
         const shortArray = jsonResult.slice(0, 100)
         const coinsArray = shortArray.map(current => {
             const coin = new Coin(current.id, current.symbol, current.name)

@@ -14,9 +14,9 @@ class CoinReports {
         this.showInLegend = true
         this.name = name.toUpperCase()
         this.markerType = "square"
-        this.xValueFormatString = "DD MMM, YYYY ,HH:MM:ss"
+        this.xValueFormatString = "DD MMM, YYYY ,HH:mm:ss"
         this.color = color
-        this.yValueFormatString = "###"
+        this.yValueFormatString = ""
         this.dataPoints = []
 
     }
@@ -27,6 +27,8 @@ class CoinReports {
         )
 
     }
+
+
 
 
 

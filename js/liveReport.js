@@ -2,7 +2,8 @@ const COINS_DATA = {
     CoinToReportArr: [],
     stringName: null,
     apiAnswer: null,
-    chart: null
+    chart: null,
+    chartRef: null
 }
 
 
@@ -45,7 +46,7 @@ async function liveReportApiData() {
         const jsonResult = await result.json();
         COINS_DATA.apiAnswer = jsonResult
         addToDaTaPoint(COINS_DATA.CoinToReportArr, COINS_DATA.apiAnswer)
-        callReport()
+        COINS_DATA.chartRef.render()
 
 
     } catch (e) {
@@ -70,12 +71,12 @@ function callReport() {
             text: "coin Prices"
         },
         axisX: {
-            valueFormatString: "DD MMM"
+            valueFormatString: "HH:mm:ss"
         },
         axisY: {
             title: "Number of Sales",
             suffix: "USD",
-            minimum: 0
+            minimum: 0.00000000000
         },
         toolTip: {
             shared: true
@@ -90,6 +91,8 @@ function callReport() {
         data: COINS_DATA.CoinToReportArr
     };
     $("#chartContainer").CanvasJSChart(options);
+    COINS_DATA.chartRef = $("#chartContainer").CanvasJSChart()
+
 
 
     function toogleDataSeries(e) {
@@ -99,6 +102,7 @@ function callReport() {
             e.dataSeries.visible = true;
         }
         e.chart.render();
+
     }
 
 }
